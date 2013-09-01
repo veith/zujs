@@ -67,13 +67,16 @@ Tc.zu = {};
     Tc.zu.bind = function ($ctx, class_id, data) {
         var model = {
             observer: new Tc.zu.bind_helper($ctx, class_id),
+            modified_attributes: {},
             attributes: {},
             fields: {},
+            hasChanges :false,
             debounceTreshhold: 500,
             data: function (fields) {
-                model.attributes = {};
+                model.modified_attributes = {};
                 model.fields = {};
                 for (var key in fields) {
+                    model.attributes[key] = fields[key];
                     model.observer.trigger(class_id + ":ui-change", [ key, fields[key], this ]);
                     if (model.fields[key] == undefined) {
                         model.fields[key] = {};
@@ -155,6 +158,8 @@ Tc.zu = {};
 
             },
             _updateAttribute: function (attr_name, val) {
+                this.modified_attributes[ attr_name ] = val;
+                this.hasChanges = true;
                 this.attributes[ attr_name ] = val;
                 model.onChange(attr_name, val);
                 // callback for single attributes
@@ -384,6 +389,10 @@ Tc.zu = {};
                 this.set(fields);
                 this.save(statusCode)
             };
+            // for multiple saves on the same ressource
+            this.reset_attributes = function ( ) {
+                    this.modified_attributes= {};
+            };
 
             this.set = function (fields) {
                 for (var key in fields) {
@@ -440,12 +449,12 @@ Tc.zu = {};
                     this.Fields.search = fields;
                 }
             };
-            this.defineExpand = function (blocks, requestType) { //string like block1(*),block3(id,email)
+            this.defineExpands = function (blocks, requestType) { //string like block1(*),block3(id,email)
                 if (requestType != undefined) {
-                    this.Expand [requestType] = fields;
+                    this.Expand [requestType] = blocks;
                 } else {
-                    this.Expand.list = fields;
-                    this.Expand.search = fields;
+                    this.Expand.list = blocks;
+                    this.Expand.search = blocks;
                 }
             };
 
