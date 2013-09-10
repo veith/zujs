@@ -45,6 +45,7 @@ Tc.zu = {};
                 // auslöser nicht aktualisieren
                 if ($bound.get(0) !== initiator.get(0)) {
                     if ($bound.is("input:radio")) {
+
                         $('input' + class_selector + class_selector + '-' + prop_name + '[value=' + new_val + ']',$ctx).attr("checked", "checked");
                     } else if ($bound.is("input, textarea, select")) {
                         $bound.val(new_val);
@@ -167,6 +168,35 @@ Tc.zu = {};
                     model.fields[attr_name].onChange(attr_name, val);
                 }
                 model.onChangeAfterFields(attr_name, val);
+            },
+            // read form data and update attributes
+            _readForm:function(class_id,$ctx){
+
+                $(".tc-" + class_id,$ctx).each(
+                function () {
+                    var $input = jQuery(this);
+                    var attr_name = this.className.match(new RegExp('tc-' + class_id + '-(\\w+)'))[1];
+                    if ($input.is("input:radio")) {
+                        model.modified_attributes[attr_name] = $('input.' + 'tc-' + class_id + '-' + attr_name + ':checked', $ctx).val();
+                        model.attributes[attr_name] = $('input.' + 'tc-' + class_id + '-' + attr_name + ':checked', $ctx).val();
+                    } else if ($input.is("input:checkbox")) {
+                        var vals = [];
+                        $('input.' + 'tc-' + class_id + '-' + attr_name + ':checked', $ctx).map(function () {
+                            vals.push($(this).val());
+                        });
+                        model.modified_attributes[attr_name] = vals;
+                        model.attributes[attr_name]= vals;
+
+                    } else if ($input.is("input, textarea, select")) {
+                        model.modified_attributes[attr_name] = $input.val();
+                        model.attributes[attr_name] = $input.val();
+
+                    } else {
+                        model.modified_attributes[attr_name] = $input.html();
+                        model.attributes[attr_name] = $input.html();
+
+                    }
+                });
             }
 
 
@@ -184,6 +214,9 @@ Tc.zu = {};
         // fill the form with data
         if (typeof (data) == "object") {
             model.data(data);
+        }else{
+        // read the form data
+            model._readForm(class_id, $ctx);
         }
 
         return model;
@@ -373,7 +406,7 @@ Tc.zu = {};
             this.add = function (fields, statusCode) {
                 var self = this;
                 $.ajax({
-                    url: this.URI + this.Mimetype.entity,
+                    url: this.URI + '.' + this.Mimetype.entity,
                     type: 'POST',
                     resourceDataType: this.JsonpCallback.entity,
                     data: fields,
