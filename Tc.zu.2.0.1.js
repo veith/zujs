@@ -8,7 +8,7 @@
 Tc.zu = {};
 (function ($) {
 
-    Tc.zu.bind_helper = function ($ctx, class_id) {
+    Tc.zu._bind_helper = function ($ctx, class_id) {
         // Use a jQuery object as simple observer
         var observer = jQuery({});
 
@@ -63,11 +63,11 @@ Tc.zu = {};
      * @param $ctx
      * @param class_id
      * @param data
-     * @returns {{observer: Tc.zu.bind_helper, attributes: {}, data: Function, set: Function, get: Function, onChange: Function}}
+     * @returns {{observer: Tc.zu._bind_helper, attributes: {}, data: Function, set: Function, get: Function, onChange: Function}}
      */
     Tc.zu.bind = function ($ctx, class_id, data) {
         var model = {
-            observer: new Tc.zu.bind_helper($ctx, class_id),
+            observer: new Tc.zu._bind_helper($ctx, class_id),
             modified_attributes: {},
             attributes: {},
             fields: {},
