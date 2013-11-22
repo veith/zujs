@@ -500,10 +500,10 @@ Tc.zu = {};
                 localStorage[this.URI + '_sort_search'] = sort;
             }
             this.setListLimit = function (numOfItems) {
-                this.resourceLimit.list = numOfItems;
+                this.Limit.list = numOfItems;
             };
             this.setSearchLimit = function (numOfItems) {
-                this.resourceLimit.search = numOfItems;
+                this.Limit.search = numOfItems;
             };
 
             this.setPrevPage = function (requestType) {
